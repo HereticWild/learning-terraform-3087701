@@ -16,8 +16,15 @@ data "aws_ami" "app_ami" {
 
 data "aws_vpc" "selected" {
   filter {
-    name = "tag:Name"
+    name   = "tag:Name"
     values = ["terraform-vpc"]
+  }
+}
+
+data "aws_subnet" "selected" {
+  filter {
+    name   = "tag:Name"
+    values = ["terraform-subnet-1"]
   }
 }
 
@@ -25,6 +32,7 @@ resource "aws_instance" "blog" {
   ami                    = data.aws_ami.app_ami.id
   instance_type          = var.instance_type
   vpc_security_group_ids = [aws_security_group.blog.id]
+  subnet_id              = data.aws_subnet.selected.id
 
   tags = {
     Name = "Learning Terraform"
